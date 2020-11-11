@@ -9,9 +9,9 @@ import Foundation
 
 extension URL {
     
-    static func urlForWeather() -> URL? {
+    static func urlForWeather(_ city: String) -> URL? {
         guard let url = URL(string:
-        "http://api.openweathermap.org/data/2.5/weather?q=london&appid=cb1e830d664d7c1dffa273845dcb2804")
+        "http://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=cb1e830d664d7c1dffa273845dcb2804")
         else {
             return nil
         }
