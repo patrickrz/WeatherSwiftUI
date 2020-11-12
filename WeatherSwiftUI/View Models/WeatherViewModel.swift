@@ -19,6 +19,17 @@ enum TemperatureUnit: String, CaseIterable {
     case celcius
 }
 
+extension TemperatureUnit {
+    var title: String {
+        switch self {
+            case .fahrenheit:
+                return "Fahrenheit"
+            case .celcius:
+                return "Celcius"
+        }
+    }
+}
+
 class WeatherViewModel: ObservableObject {
     
     @Published private var weather: Weather?
@@ -26,11 +37,16 @@ class WeatherViewModel: ObservableObject {
     @Published var loadingState: LoadingState = .firstTime
     @Published var temperatureUnit: TemperatureUnit = .fahrenheit
     
-    var temperature: Double {
+    var temperature: String {
         guard let temp = weather?.temp else {
-            return 0.0
+            return "--"
         }
-        return temp
+        switch temperatureUnit {
+            case .fahrenheit:
+                return String(format: "%.0F°F", temp.toFahrenheit())
+            case .celcius:
+                return String(format: "%.0F°C", temp.toCelsius())
+        }
     }
     
     var feelLike: Double {
@@ -61,11 +77,11 @@ class WeatherViewModel: ObservableObject {
         return pressure
     }
     
-    var humidityVal: Double {
+    var humidityVal: String {
         guard let humidity = weather?.humidity else {
-            return 0.0
+            return "--"
         }
-        return humidity
+        return String(format: "%.0F%%", humidity)
     }
     
     

@@ -13,11 +13,16 @@ struct ContentView: View {
     @ObservedObject private var weatherVM = WeatherViewModel()
     @State private var city: String = ""
     
+    init(weather: WeatherViewModel = WeatherViewModel()) {
+            self.weatherVM = weatherVM
+        }
+    
     var body: some View {
         VStack {
             TextField("Search", text: self.$city, onEditingChanged: { _ in }, onCommit: {
-                //perform fetch weather using the city name
+                self.weatherVM.fetchWeather(city: self.city)
             }).textFieldStyle(RoundedBorderTextFieldStyle())
+            
             Spacer()
             if self.weatherVM.loadingState == .loading {
                 Text("Loading...")
@@ -44,21 +49,25 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct WeatherView: View {
-    let weather: WeatherViewModel
-//     let city: String
+    @ObservedObject var weather: WeatherViewModel
     var body: some View {
         VStack(spacing: 10) {
-//            Text("\(city)")
             Text("\(weather.temperature)")
                 .font(.largeTitle)
                 .foregroundColor(Color.white)
             Text("\(weather.humidityVal)")
                 .foregroundColor(Color.white)
                 .opacity(0.7)
+            Picker(selection: self.$weather.temperatureUnit, label: Text("Select a Unit")) {
+                ForEach(TemperatureUnit.allCases, id: \.self) { unit in
+                    Text(unit.title)
+                }
+            }.pickerStyle(SegmentedPickerStyle())
         }
         .padding()
-        .frame(width: 300, height: 150)
+        .frame(width: 300, height: 600)
         .background(Color.blue)
+        .clipShape(RoundedRectangle(cornerRadius: 15.0, style: .continuous))
         
     }
 
