@@ -36,6 +36,7 @@ class WeatherViewModel: ObservableObject {
     @Published var errorMessage: String = ""
     @Published var loadingState: LoadingState = .firstTime
     @Published var temperatureUnit: TemperatureUnit = .fahrenheit
+    private let locationManager = LocationManager()
     
     var temperature: String {
         guard let temp = weather?.temp else {
@@ -49,34 +50,49 @@ class WeatherViewModel: ObservableObject {
         }
     }
     
-    var feelLike: Double {
+    var feelLike: String {
         guard let feels_like = weather?.feels_like else {
-            return 0.0
+            return "--"
         }
-        return feels_like
+        switch temperatureUnit {
+            case .fahrenheit:
+                return String(format: "%.0F°F", feels_like.toFahrenheit())
+            case .celcius:
+                return String(format: "%.0F°C", feels_like.toCelsius())
+        }
     }
     
-    var minTemp: Double {
+    var minTemp: String {
         guard let temp_min = weather?.temp_min else {
-            return 0.0
+            return "--"
         }
-        return temp_min
+        switch temperatureUnit {
+            case .fahrenheit:
+                return String(format: "%.0F°", temp_min.toFahrenheit())
+            case .celcius:
+                return String(format: "%.0F°", temp_min.toCelsius())
+        }
     }
     
-    var maxTemp: Double {
+    var maxTemp: String {
         guard let temp_max = weather?.temp_max else {
-            return 0.0
+            return "--"
         }
-        return temp_max
+        switch temperatureUnit {
+            case .fahrenheit:
+                return String(format: "%.0F°", temp_max.toFahrenheit())
+            case .celcius:
+                return String(format: "%.0F°", temp_max.toCelsius())
+        }
     }
     
-    var pressureVal: Double {
-        guard let pressure = weather?.pressure else {
-            return 0.0
-        }
-        return pressure
-    }
-    
+//    var pressureVal: Double {
+//        guard let pressure = weather?.pressure else {
+//            return 0.0
+//        }
+//        return pressure
+//    }
+//
     var humidityVal: String {
         guard let humidity = weather?.humidity else {
             return "--"
@@ -84,7 +100,25 @@ class WeatherViewModel: ObservableObject {
         return String(format: "%.0F%%", humidity)
     }
     
-    
+    func fetchInitial() -> String {
+        guard let exposedLocation = self.locationManager.exposedLocation else {
+            print("*** Error in \(#function): exposedLocation is nil")
+            return "Error: exposedLocation is nil"
+        }
+        
+        var returnString = ""
+        self.locationManager.getPlace(for: exposedLocation) { placemark in
+            guard let placemark = placemark else { return }
+            
+            
+            if let town = placemark.locality {
+                returnString = returnString + "\(town)"
+                
+            }
+        }
+        return returnString
+    }
+
     
     func fetchWeather(city: String) {
         

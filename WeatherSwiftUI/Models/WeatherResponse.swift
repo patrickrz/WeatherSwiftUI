@@ -19,3 +19,4 @@ struct Weather: Decodable {
     let pressure: Double
     let humidity: Double
 }
+

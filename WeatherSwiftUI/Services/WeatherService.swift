@@ -31,4 +31,5 @@ class WeatherService {
             }
         }.resume()
     }
+    
 }
