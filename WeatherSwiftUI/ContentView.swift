@@ -23,12 +23,17 @@ struct ContentView: View {
         ZStack {
             Color.blue.ignoresSafeArea()
             VStack {
-                self.weatherVM.fetchWeather(city: self.weatherVM.fetchInitial())
-                    
-            TextField("Search", text: self.$city, onEditingChanged: { _ in }, onCommit: {
-                self.weatherVM.fetchWeather(city: self.city)
-                self.nameVM.fetchName(city: self.city)
-            }).textFieldStyle(RoundedBorderTextFieldStyle())
+                if self.weatherVM.loadingState == .firstTime {
+                    self.weatherVM.fetchWeather(city: self.weatherVM.fetchInitial())
+                }
+                else {
+                    TextField("Search", text: self.$city, onEditingChanged: { _ in }, onCommit: {
+                        self.weatherVM.fetchWeather(city: self.city)
+                        self.nameVM.fetchName(city: self.city)
+                    }).textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+            
+            
             MainView(weatherVM: weatherVM, nameVM: nameVM)
             }.padding()
         }
