@@ -14,11 +14,17 @@ enum LoadingState {
     case firstTime
 }
 
+enum TemperatureUnit: String, CaseIterable {
+    case fahrenheit
+    case celcius
+}
+
 class WeatherViewModel: ObservableObject {
     
     @Published private var weather: Weather?
     @Published var errorMessage: String = ""
     @Published var loadingState: LoadingState = .firstTime
+    @Published var temperatureUnit: TemperatureUnit = .fahrenheit
     
     var temperature: Double {
         guard let temp = weather?.temp else {
