@@ -11,30 +11,25 @@ struct ContentView: View {
     
     
     @ObservedObject private var weatherVM = WeatherViewModel()
-    @ObservedObject private var nameVM = NameViewModel()
     @State private var locationManager = LocationManager()
     @State private var city: String = ""
     
-    init(weather: WeatherViewModel = WeatherViewModel()) {
-            self.weatherVM = weatherVM
-        }
     
     var body: some View {
         ZStack {
-            Color.blue.ignoresSafeArea()
+            Color.white.ignoresSafeArea()
             VStack {
-                if self.weatherVM.loadingState == .firstTime {
-                    self.weatherVM.fetchWeather(city: self.weatherVM.fetchInitial())
-                }
-                else {
+//                if self.weatherVM.loadingState == .firstTime {
+//                    self.weatherVM.fetchWeather(city: self.weatherVM.fetchInitial())
+//                }
+                if weatherVM.loadingState != .firstTime {
                     TextField("Search", text: self.$city, onEditingChanged: { _ in }, onCommit: {
                         self.weatherVM.fetchWeather(city: self.city)
-                        self.nameVM.fetchName(city: self.city)
                     }).textFieldStyle(RoundedBorderTextFieldStyle())
                 }
             
             
-            MainView(weatherVM: weatherVM, nameVM: nameVM)
+            MainView(weatherVM: weatherVM)
             }.padding()
         }
     }
@@ -53,7 +48,6 @@ struct ContentView_Previews: PreviewProvider {
 
 struct MainView: View {
     @ObservedObject var weatherVM: WeatherViewModel
-    @ObservedObject var nameVM: NameViewModel
 
     var body: some View {
         
@@ -62,7 +56,7 @@ struct MainView: View {
             if self.weatherVM.loadingState == .loading {
                 Text("Loading...")
             } else if self.weatherVM.loadingState == .success {
-                WeatherView(weather: self.weatherVM, name: nameVM)
+                WeatherView(weather: self.weatherVM)
             } else if self.weatherVM.loadingState == .failed {
                 Text(weatherVM.errorMessage).foregroundColor(.red)
 
@@ -80,7 +74,6 @@ struct MainView: View {
 
 struct WeatherView: View {
     @ObservedObject var weather: WeatherViewModel
-    @ObservedObject var name: NameViewModel
     var body: some View {
         VStack(spacing: 5) {
             Picker(selection: self.$weather.temperatureUnit, label: Text("Select a Unit")) {
@@ -89,7 +82,7 @@ struct WeatherView: View {
                 }
             }.pickerStyle(SegmentedPickerStyle())
             Spacer()
-            Text("\(name.cityName)")
+            Text("\(weather.cityName)")
                 .font(.largeTitle)
                 .foregroundColor(Color.white)
             Spacer()
@@ -110,7 +103,7 @@ struct WeatherView: View {
         }
         .padding()
         .frame(width: 300, height: 600)
-        .background(Color.white)
+        .background(Color.blue)
         .clipShape(RoundedRectangle(cornerRadius: 15.0, style: .continuous))
 
     }

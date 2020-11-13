@@ -34,9 +34,14 @@ class WeatherViewModel: ObservableObject {
     
     @Published private var weather: Weather?
     @Published var errorMessage: String = ""
-    @Published var loadingState: LoadingState = .firstTime
+    @Published var loadingState: LoadingState = .loading
     @Published var temperatureUnit: TemperatureUnit = .fahrenheit
+    @Published var cityName: String = ""
     private let locationManager = LocationManager()
+    
+    init() {
+        fetchWeather(city: fetchInitial())
+    }
     
     var temperature: String {
         guard let temp = weather?.temp else {
@@ -121,7 +126,7 @@ class WeatherViewModel: ObservableObject {
 
     
     func fetchWeather(city: String) {
-        
+        print(city)
         guard let city = city.spaceCheck() else {
             DispatchQueue.main.async {
                 self.errorMessage = "City is incorrect"
@@ -131,11 +136,12 @@ class WeatherViewModel: ObservableObject {
         
         self.loadingState = .loading
         
-        WeatherService().getWeather(city: city) { result in
+        WeatherService.shared.getWeather(city: city) { result in
             switch result {
-            case .success(let weather):
+            case .success(let weatherResponse):
                 DispatchQueue.main.async {
-                    self.weather = weather
+                    self.weather = weatherResponse.main
+                    self.cityName = weatherResponse.name
                     self.loadingState = .success
                 }
                 
