@@ -6,19 +6,23 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
     
     
     @ObservedObject private var weatherVM = WeatherViewModel()
-    @State private var locationManager = LocationManager()
+//    @State private var locationManager = LocationManager()
     @State private var city: String = ""
+    
+    
     
     
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
             VStack {
+                
 //                if self.weatherVM.loadingState == .firstTime {
 //                    self.weatherVM.fetchWeather(city: self.weatherVM.fetchInitial())
 //                }
@@ -27,7 +31,6 @@ struct ContentView: View {
                         self.weatherVM.fetchWeather(city: self.city)
                     }).textFieldStyle(RoundedBorderTextFieldStyle())
                 }
-            
             
             MainView(weatherVM: weatherVM)
             }.padding()

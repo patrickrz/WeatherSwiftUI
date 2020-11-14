@@ -40,7 +40,13 @@ class WeatherViewModel: ObservableObject {
     private let locationManager = LocationManager()
     
     init() {
-        fetchWeather(city: fetchInitial())
+        LocationManager.shared.$city.sink(receiveValue: { city in
+            if let city = city {
+                self.cityName = city
+                print(city)
+            }
+            
+        })
     }
     
     var temperature: String {
@@ -103,25 +109,6 @@ class WeatherViewModel: ObservableObject {
             return "--"
         }
         return String(format: "%.0F%%", humidity)
-    }
-    
-    func fetchInitial() -> String {
-        guard let exposedLocation = self.locationManager.exposedLocation else {
-            print("*** Error in \(#function): exposedLocation is nil")
-            return "Error: exposedLocation is nil"
-        }
-        
-        var returnString = ""
-        self.locationManager.getPlace(for: exposedLocation) { placemark in
-            guard let placemark = placemark else { return }
-            
-            
-            if let town = placemark.locality {
-                returnString = returnString + "\(town)"
-                
-            }
-        }
-        return returnString
     }
 
     

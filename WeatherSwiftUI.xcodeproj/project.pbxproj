@@ -71,7 +71,6 @@
 				80DE85BA255B6BA900645C7C /* Services */,
 				80DE85B5255B68C600645C7C /* Models */,
 				80192A9B255B62ED00452464 /* WeatherSwiftUIApp.swift */,
-				80192A9D255B62ED00452464 /* ContentView.swift */,
 				80192A9F255B62F200452464 /* Assets.xcassets */,
 				80192AA4255B62F200452464 /* Info.plist */,
 				80192AA1255B62F200452464 /* Preview Content */,
@@ -118,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				80DE85C5255B782E00645C7C /* WeatherViewModel.swift */,
+				80192A9D255B62ED00452464 /* ContentView.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
