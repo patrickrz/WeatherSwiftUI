@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 enum LoadingState {
     case loading
@@ -22,10 +23,10 @@ enum TemperatureUnit: String, CaseIterable {
 extension TemperatureUnit {
     var title: String {
         switch self {
-            case .fahrenheit:
-                return "Fahrenheit"
-            case .celcius:
-                return "Celcius"
+        case .fahrenheit:
+            return "Fahrenheit"
+        case .celcius:
+            return "Celsius"
         }
     }
 }
@@ -38,15 +39,11 @@ class WeatherViewModel: ObservableObject {
     @Published var temperatureUnit: TemperatureUnit = .fahrenheit
     @Published var cityName: String = ""
     private let locationManager = LocationManager()
+    private var cityUpdate: AnyCancellable?
+    
     
     init() {
-        LocationManager.shared.$city.sink(receiveValue: { city in
-            if let city = city {
-                self.cityName = city
-                print(city)
-            }
-            
-        })
+        cityUpdate = LocationManager.shared.$city.sink(receiveValue: { print($0)})
     }
     
     var temperature: String {
@@ -54,10 +51,10 @@ class WeatherViewModel: ObservableObject {
             return "--"
         }
         switch temperatureUnit {
-            case .fahrenheit:
-                return String(format: "%.0F°F", temp.toFahrenheit())
-            case .celcius:
-                return String(format: "%.0F°C", temp.toCelsius())
+        case .fahrenheit:
+            return String(format: "%.0F°F", temp.toFahrenheit())
+        case .celcius:
+            return String(format: "%.0F°C", temp.toCelsius())
         }
     }
     
@@ -66,10 +63,10 @@ class WeatherViewModel: ObservableObject {
             return "--"
         }
         switch temperatureUnit {
-            case .fahrenheit:
-                return String(format: "%.0F°F", feels_like.toFahrenheit())
-            case .celcius:
-                return String(format: "%.0F°C", feels_like.toCelsius())
+        case .fahrenheit:
+            return String(format: "%.0F°F", feels_like.toFahrenheit())
+        case .celcius:
+            return String(format: "%.0F°C", feels_like.toCelsius())
         }
     }
     
@@ -78,10 +75,10 @@ class WeatherViewModel: ObservableObject {
             return "--"
         }
         switch temperatureUnit {
-            case .fahrenheit:
-                return String(format: "%.0F°", temp_min.toFahrenheit())
-            case .celcius:
-                return String(format: "%.0F°", temp_min.toCelsius())
+        case .fahrenheit:
+            return String(format: "%.0F°", temp_min.toFahrenheit())
+        case .celcius:
+            return String(format: "%.0F°", temp_min.toCelsius())
         }
     }
     
@@ -90,27 +87,20 @@ class WeatherViewModel: ObservableObject {
             return "--"
         }
         switch temperatureUnit {
-            case .fahrenheit:
-                return String(format: "%.0F°", temp_max.toFahrenheit())
-            case .celcius:
-                return String(format: "%.0F°", temp_max.toCelsius())
+        case .fahrenheit:
+            return String(format: "%.0F°", temp_max.toFahrenheit())
+        case .celcius:
+            return String(format: "%.0F°", temp_max.toCelsius())
         }
     }
     
-//    var pressureVal: Double {
-//        guard let pressure = weather?.pressure else {
-//            return 0.0
-//        }
-//        return pressure
-//    }
-//
     var humidityVal: String {
         guard let humidity = weather?.humidity else {
             return "--"
         }
         return String(format: "%.0F%%", humidity)
     }
-
+    
     
     func fetchWeather(city: String) {
         print(city)
@@ -141,6 +131,4 @@ class WeatherViewModel: ObservableObject {
             }
         }
     }
-
-    
 }

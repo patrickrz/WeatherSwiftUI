@@ -21,3 +21,4 @@ struct Weather: Decodable {
     let humidity: Double
 }
 
+
